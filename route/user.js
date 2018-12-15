@@ -4,6 +4,7 @@ const userscema= require('../modules/user')
 const becrypt=require('bcryptjs')
 const jwt=require('jsonwebtoken')
 const moongose= require('mongoose')
+const checkauth=require('../checkauth')
 router.post('/register',(req,res,next)=>{
     
     userscema.find({email:req.body.email}).exec().then(user=>{
@@ -69,9 +70,32 @@ res.status(400).send(err.message)
 
 
 
+router.post('/checklogin',checkauth,(req,res)=>{
+
+jwt.verify(req.token,'secret',(err,auth)=>{
+
+if(err){
+   // console.log("err in check",err.message);
+    
+    res.status(400).send(err);
+}
+
+else{
+    //for payload info. i console or may can send as response
+    console.log(auth.iat);
+    res.send(auth)
 
 
-router.post('/login',(req,res,next)=>{
+}
+
+
+
+
+})
+});
+
+
+router.post('/login',(req,res)=>{
 userscema.find({email:req.body.email}).exec().then(users=>{
     console.log("users",users);
     console.log("  users[0]",  users[0]);
